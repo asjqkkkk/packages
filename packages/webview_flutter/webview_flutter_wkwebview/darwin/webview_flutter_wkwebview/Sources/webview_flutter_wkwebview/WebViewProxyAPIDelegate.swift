@@ -90,6 +90,15 @@ class WebViewImpl: WKWebView {
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
       return allowsUserInteraction
     }
+
+    override func viewWillMove(toWindow newWindow: NSWindow?) {
+      super.viewWillMove(toWindow: newWindow)
+      if let window = newWindow, !allowsUserInteraction {
+        // When interaction is disabled and the view is added to a window,
+        // request cursor rect invalidation to ensure Flutter controls cursor
+        window.invalidateCursorRects(for: self)
+      }
+    }
   #endif
 }
 

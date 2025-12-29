@@ -2,6 +2,9 @@
 
 * Improves macOS user interaction handling by overriding `acceptsFirstMouse` to ensure
   mouse clicks properly pass through to Flutter widgets when interaction is disabled.
+* Adds `viewWillMove(toWindow:)` override to ensure cursor rects are properly
+  invalidated when the WebView is added to a window with interaction disabled,
+  allowing Flutter widgets layered above to control cursor appearance.
 
 ## 3.23.2
 
