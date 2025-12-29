@@ -351,6 +351,16 @@ abstract class PlatformWebViewController extends PlatformInterface {
     );
   }
 
+  /// Enables or disables user interaction with the WebView surface.
+  ///
+  /// Platforms that do not support toggling user interaction should throw
+  /// [UnimplementedError].
+  Future<void> setUserInteractionEnabled(bool enabled) {
+    throw UnimplementedError(
+      'setUserInteractionEnabled is not implemented on the current platform',
+    );
+  }
+
   /// Sets a callback that notifies the host application that the web page
   /// wants to display a JavaScript alert() dialog.
   Future<void> setOnJavaScriptAlertDialog(

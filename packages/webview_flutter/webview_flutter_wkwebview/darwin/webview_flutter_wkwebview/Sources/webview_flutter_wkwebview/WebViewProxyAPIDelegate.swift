@@ -7,6 +7,7 @@ import WebKit
 class WebViewImpl: WKWebView {
   let api: PigeonApiProtocolWKWebView
   unowned let registrar: ProxyAPIRegistrar
+  private(set) var allowsUserInteraction = true
 
   init(
     api: PigeonApiProtocolWKWebView, registrar: ProxyAPIRegistrar, frame: CGRect,
@@ -25,6 +26,17 @@ class WebViewImpl: WKWebView {
 
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+
+  func setUserInteractionEnabled(_ enabled: Bool) {
+    allowsUserInteraction = enabled
+    #if os(iOS)
+      isUserInteractionEnabled = enabled
+    #else
+      // Request cursor rect recalculation so Flutter widgets layered above can
+      // control pointer state when interaction is disabled.
+      window?.invalidateCursorRects(for: self)
+    #endif
   }
 
   override func observeValue(
@@ -58,6 +70,27 @@ class WebViewImpl: WKWebView {
       #endif
     }
   }
+
+  #if os(macOS)
+    override func hitTest(_ point: NSPoint) -> NSView? {
+      guard allowsUserInteraction else {
+        return nil
+      }
+      return super.hitTest(point)
+    }
+
+    override func resetCursorRects() {
+      if allowsUserInteraction {
+        super.resetCursorRects()
+      } else {
+        discardCursorRects()
+      }
+    }
+
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+      return allowsUserInteraction
+    }
+  #endif
 }
 
 /// ProxyApi implementation for `WKWebView`.
@@ -69,6 +102,16 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
 {
   func getUIViewWKWebViewAPI(_ api: PigeonApiNSViewWKWebView) -> PigeonApiUIViewWKWebView {
     return api.pigeonRegistrar.apiDelegate.pigeonApiUIViewWKWebView(api.pigeonRegistrar)
+  }
+
+  private func setUserInteraction(_ pigeonInstance: WKWebView, enabled: Bool) {
+    if let impl = pigeonInstance as? WebViewImpl {
+      impl.setUserInteractionEnabled(enabled)
+      return
+    }
+    #if os(iOS)
+      pigeonInstance.isUserInteractionEnabled = enabled
+    #endif
   }
 
   #if os(iOS)
@@ -392,5 +435,17 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   ) throws {
     try setAllowsLinkPreview(
       pigeonApi: getUIViewWKWebViewAPI(pigeonApi), pigeonInstance: pigeonInstance, allow: allow)
+  }
+
+  func setUserInteractionEnabled(
+    pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, enabled: Bool
+  ) throws {
+    setUserInteraction(pigeonInstance, enabled: enabled)
+  }
+
+  func setUserInteractionEnabled(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, enabled: Bool
+  ) throws {
+    setUserInteraction(pigeonInstance, enabled: enabled)
   }
 }

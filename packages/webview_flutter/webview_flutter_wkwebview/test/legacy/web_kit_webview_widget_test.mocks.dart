@@ -32,6 +32,7 @@ import 'package:webview_flutter_wkwebview/src/legacy/web_kit_webview_widget.dart
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
@@ -958,6 +959,15 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
   _i4.Future<void> setAllowsLinkPreview(bool? allow) =>
       (super.noSuchMethod(
             Invocation.method(#setAllowsLinkPreview, [allow]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setUserInteractionEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+            Invocation.method(#setUserInteractionEnabled, [enabled]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

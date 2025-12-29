@@ -32,6 +32,7 @@ import 'webkit_webview_controller_test.mocks.dart';
   MockSpec<WKWebViewConfiguration>(),
   MockSpec<WKWebpagePreferences>(),
   MockSpec<UIViewWKWebView>(),
+  MockSpec<NSViewWKWebView>(),
   MockSpec<WKWebsiteDataStore>(),
 ])
 void main() {
@@ -45,7 +46,7 @@ void main() {
       WKUIDelegate? uiDelegate,
       MockWKUserContentController? mockUserContentController,
       MockWKWebsiteDataStore? mockWebsiteDataStore,
-      MockUIViewWKWebView Function(
+      WKWebView Function(
         WKWebViewConfiguration configuration, {
         void Function(
           NSObject,
@@ -63,7 +64,8 @@ void main() {
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
           mockWebViewConfiguration ?? MockWKWebViewConfiguration();
-      late final MockUIViewWKWebView nonNullMockWebView;
+      late final WKWebView nonNullMockWebView;
+      MockUIViewWKWebView? mockUIViewWebView;
 
       final PlatformWebViewControllerCreationParams
       controllerCreationParams = WebKitWebViewControllerCreationParams(
@@ -90,6 +92,9 @@ void main() {
                       nonNullMockWebViewConfiguration,
                       observeValue: observeValue,
                     );
+            if (nonNullMockWebView is MockUIViewWKWebView) {
+              mockUIViewWebView = nonNullMockWebView as MockUIViewWKWebView;
+            }
             return PlatformWebView.fromNativeWebView(nonNullMockWebView);
           },
           newWKUIDelegate: ({
@@ -179,12 +184,14 @@ void main() {
         controllerCreationParams,
       );
 
-      when(
-        nonNullMockWebView.scrollView,
-      ).thenReturn(mockScrollView ?? MockUIScrollView());
-      when(
-        nonNullMockWebView.configuration,
-      ).thenReturn(nonNullMockWebViewConfiguration);
+      if (mockUIViewWebView != null) {
+        when(
+          mockUIViewWebView!.scrollView,
+        ).thenReturn(mockScrollView ?? MockUIScrollView());
+        when(
+          mockUIViewWebView!.configuration,
+        ).thenReturn(nonNullMockWebViewConfiguration);
+      }
 
       when(nonNullMockWebViewConfiguration.getPreferences()).thenAnswer(
         (_) => Future<MockWKPreferences>.value(
@@ -1735,6 +1742,48 @@ void main() {
       await controller.setAllowsLinkPreview(true);
       verify(mockWebView.setAllowsLinkPreview(true));
     });
+
+    test('setUserInteractionEnabled throws on non-macOS', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() {
+        debugDefaultTargetPlatformOverride = null;
+      });
+
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      expect(
+        () => controller.setUserInteractionEnabled(true),
+        throwsA(isA<UnimplementedError>()),
+      );
+    });
+
+    test('setUserInteractionEnabled', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      addTearDown(() {
+        debugDefaultTargetPlatformOverride = null;
+      });
+
+      final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.setUserInteractionEnabled(false);
+      verify(mockWebView.setUserInteractionEnabled(false));
+    });
+
+    test(
+      'PlatformWebView routes setUserInteractionEnabled to NSView',
+      () async {
+        final MockNSViewWKWebView mockWebView = MockNSViewWKWebView();
+        final PlatformWebView platformWebView =
+            PlatformWebView.fromNativeWebView(mockWebView);
+
+        await platformWebView.setUserInteractionEnabled(false);
+        verify(mockWebView.setUserInteractionEnabled(false));
+      },
+    );
 
     group('Console logging', () {
       test(

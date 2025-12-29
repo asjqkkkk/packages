@@ -485,6 +485,21 @@ void main() {
   );
 
   test(
+    'Default implementation of setUserInteractionEnabled should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
+
+      expect(
+        () => controller.setUserInteractionEnabled(true),
+        throwsUnimplementedError,
+      );
+    },
+  );
+
+  test(
     'Default implementation of setOnJavaScriptAlertDialog should throw unimplemented error',
     () {
       final PlatformWebViewController controller =

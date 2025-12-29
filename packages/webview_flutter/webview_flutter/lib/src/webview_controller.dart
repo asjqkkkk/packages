@@ -405,6 +405,15 @@ class WebViewController {
     return platform.setOnScrollPositionChange(onScrollPositionChange);
   }
 
+  /// Enables or disables user interaction with the WebView surface.
+  ///
+  /// Currently only the macOS WebKit implementation supports disabling user
+  /// interaction, where setting [enabled] to false prevents the WebView from
+  /// reacting to pointer or touch gestures.
+  Future<void> setUserInteractionEnabled(bool enabled) {
+    return platform.setUserInteractionEnabled(enabled);
+  }
+
   /// Whether the vertical scrollbar should be drawn or not.
   Future<void> setVerticalScrollBarEnabled(bool enabled) {
     return platform.setVerticalScrollBarEnabled(enabled);

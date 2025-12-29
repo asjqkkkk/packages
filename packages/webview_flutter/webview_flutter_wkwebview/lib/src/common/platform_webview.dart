@@ -419,4 +419,17 @@ class PlatformWebView {
 
     throw UnimplementedError('${webView.runtimeType} is not supported.');
   }
+
+  /// Enables or disables user interaction for the web view.
+  Future<void> setUserInteractionEnabled(bool enabled) {
+    final WKWebView webView = nativeWebView;
+    switch (webView) {
+      case UIViewWKWebView():
+        return webView.setUserInteractionEnabled(enabled);
+      case NSViewWKWebView():
+        return webView.setUserInteractionEnabled(enabled);
+    }
+
+    throw UnimplementedError('${webView.runtimeType} is not supported.');
+  }
 }

@@ -1,6 +1,10 @@
 ## NEXT
 
+## 4.13.1
+
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Adds `WebViewController.setUserInteractionEnabled` to control whether the WebView
+  responds to user interaction (macOS only).
 
 ## 4.13.0
 

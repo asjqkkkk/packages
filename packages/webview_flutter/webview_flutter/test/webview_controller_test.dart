@@ -557,6 +557,18 @@ void main() {
     );
   });
 
+  test('setUserInteractionEnabled', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    await webViewController.setUserInteractionEnabled(false);
+    verify(mockPlatformWebViewController.setUserInteractionEnabled(false));
+  });
+
   test('setOverScrollMode', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();

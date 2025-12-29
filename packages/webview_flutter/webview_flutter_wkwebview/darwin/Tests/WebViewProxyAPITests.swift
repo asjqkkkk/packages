@@ -290,6 +290,34 @@ class WebViewProxyAPITests: XCTestCase {
     XCTAssertEqual(instance.allowsLinkPreview, allow)
   }
 
+  @MainActor func testSetUserInteractionEnabled() {
+    let registrar = TestProxyApiRegistrar()
+    let api = webViewProxyAPI(forRegistrar: registrar)
+
+    let instance = WebViewImpl(
+      api: registrar.apiDelegate.pigeonApiWKWebView(registrar), registrar: registrar,
+      frame: .zero, configuration: WKWebViewConfiguration())
+    try? api.pigeonDelegate.setUserInteractionEnabled(
+      pigeonApi: api, pigeonInstance: instance, enabled: false)
+
+    #if os(iOS)
+      XCTAssertFalse(instance.isUserInteractionEnabled)
+    #elseif os(macOS)
+      XCTAssertFalse(instance.allowsUserInteraction)
+      XCTAssertFalse(instance.acceptsFirstMouse(for: nil))
+    #endif
+
+    try? api.pigeonDelegate.setUserInteractionEnabled(
+      pigeonApi: api, pigeonInstance: instance, enabled: true)
+
+    #if os(iOS)
+      XCTAssertTrue(instance.isUserInteractionEnabled)
+    #elseif os(macOS)
+      XCTAssertTrue(instance.allowsUserInteraction)
+      XCTAssertTrue(instance.acceptsFirstMouse(for: nil))
+    #endif
+  }
+
   @MainActor func testGetCustomUserAgent() {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)

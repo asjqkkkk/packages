@@ -1,6 +1,19 @@
 ## NEXT
 
+* Improves macOS user interaction handling by overriding `acceptsFirstMouse` to ensure
+  mouse clicks properly pass through to Flutter widgets when interaction is disabled.
+
+## 3.23.2
+
+* Fixes macOS pointer cursors by ensuring `WKWebView` ignores mouse events when
+  interaction is disabled so Flutter widgets layered above can show the correct
+  cursor styles.
+
+## 3.23.1
+
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Adds macOS support for toggling user interaction with the WebView via
+  `WebKitWebViewController.setUserInteractionEnabled`.
 
 ## 3.23.0
 

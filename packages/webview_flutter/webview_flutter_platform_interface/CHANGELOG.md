@@ -1,6 +1,10 @@
 ## NEXT
 
+## 2.14.1
+
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Adds `PlatformWebViewController.setUserInteractionEnabled` to allow platforms
+  to toggle user interaction support.
 
 ## 2.14.0
 

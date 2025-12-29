@@ -936,6 +936,9 @@ abstract class UIViewWKWebView extends UIView implements WKWebView {
   ///
   /// Defaults to true.
   void setAllowsLinkPreview(bool allow);
+
+  /// Enables or disables user interaction for the web view.
+  void setUserInteractionEnabled(bool enabled);
 }
 
 /// An object that displays interactive web content, such as for an in-app
@@ -1025,6 +1028,9 @@ abstract class NSViewWKWebView extends NSObject implements WKWebView {
   ///
   /// Defaults to true.
   void setAllowsLinkPreview(bool allow);
+
+  /// Enables or disables user interaction for the web view.
+  void setUserInteractionEnabled(bool enabled);
 }
 
 /// An object that displays interactive web content, such as for an in-app

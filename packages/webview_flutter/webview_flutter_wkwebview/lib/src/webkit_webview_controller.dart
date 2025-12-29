@@ -423,6 +423,19 @@ class WebKitWebViewController extends PlatformWebViewController {
     return _webView.setAllowsLinkPreview(allow);
   }
 
+  /// Enables or disables user interaction for the underlying WKWebView.
+  ///
+  /// Only supported on macOS. On iOS this call has no effect.
+  @override
+  Future<void> setUserInteractionEnabled(bool enabled) {
+    if (defaultTargetPlatform != TargetPlatform.macOS) {
+      throw UnimplementedError(
+        'setUserInteractionEnabled is only supported on macOS.',
+      );
+    }
+    return _webView.setUserInteractionEnabled(enabled);
+  }
+
   /// Sets the listener for canGoBack changes.
   Future<void> setOnCanGoBackChange(
     void Function(bool) onCanGoBackChangeCallback,
