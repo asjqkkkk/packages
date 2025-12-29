@@ -5,6 +5,8 @@
 * Adds `viewWillMove(toWindow:)` override to ensure cursor rects are properly
   invalidated when the WebView is added to a window with interaction disabled,
   allowing Flutter widgets layered above to control cursor appearance.
+* Adds `cursorUpdate(with:)` override to prevent cursor changes when interaction is disabled,
+  fixing cursor flickering when hovering over Flutter widgets layered above the WebView.
 
 ## 3.23.2
 

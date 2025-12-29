@@ -305,11 +305,6 @@ class WebViewProxyAPITests: XCTestCase {
     #elseif os(macOS)
       XCTAssertFalse(instance.allowsUserInteraction)
       XCTAssertFalse(instance.acceptsFirstMouse(for: nil))
-      // Verify viewWillMove prepares cursor rects for invalidation
-      let expectation = XCTestExpectation(description: "Cursor rects invalidated")
-      instance.viewWillMove(toWindow: nil)
-      expectation.fulfill()
-      wait(for: [expectation], timeout: 1.0)
     #endif
 
     try? api.pigeonDelegate.setUserInteractionEnabled(

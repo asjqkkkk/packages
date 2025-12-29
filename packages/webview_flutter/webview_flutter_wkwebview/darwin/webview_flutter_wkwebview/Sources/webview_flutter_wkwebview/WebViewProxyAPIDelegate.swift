@@ -99,6 +99,13 @@ class WebViewImpl: WKWebView {
         window.invalidateCursorRects(for: self)
       }
     }
+
+    override func cursorUpdate(with event: NSEvent) {
+      if allowsUserInteraction {
+        super.cursorUpdate(with: event)
+      }
+      // When interaction is disabled, do nothing to prevent cursor changes
+    }
   #endif
 }
 
